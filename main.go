@@ -42,9 +42,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	baseDN := "cn=WURM,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DriverSet,o=System"
+	baseDN := "cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DriverSet,o=System"
 	//filter := fmt.Sprintf("(objectClass=%s)", ldap.EscapeFilter("*"))
 	filter := "(objectClass=*)"
+	filter = "(nrfRoleCategoryKey=owner-managed)"
 	fmt.Println("filter: ", filter)
 	searchReq := ldap.NewSearchRequest(baseDN, ldap.ScopeWholeSubtree, 0, 0, 0, false, filter, []string{"modifyTimestamp"}, []ldap.Control{})
 
