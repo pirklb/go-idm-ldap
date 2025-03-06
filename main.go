@@ -1,6 +1,10 @@
+// Version: 0.0.2503061
+// 0.0.2503061 ... added support for commandline parameters
+
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -13,7 +17,7 @@ func main() {
 	fmt.Println("eDirectory LDAP")
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatalf("Error loading .env file: %s", err)
+		log.Printf("Error loading .env file: %s, but as this is not the only option to get the needed parameters the program continues", err)
 	}
 
 	url := os.Getenv("LDAP_URL")
@@ -25,10 +29,17 @@ func main() {
 		user = "cn=LDAPReader,o=System"
 	}
 	pawd := os.Getenv("LDAP_PASSWORD")
-	if pawd == "" {
-		log.Fatal("LDAP_PASSWORD is not set")
-	}
 
+	flag.StringVar(&url, "url", url, "LDAP URL")
+	flag.StringVar(&user, "user", user, "Bind User DN")
+	flag.StringVar(&pawd, "pawd", pawd, "Bind User Password")
+	flag.Parse()
+
+	if pawd == "" || user == "" || url == "" {
+		log.Fatal("You have not provided all required parameters, so the program ends now")
+	}
+	fmt.Println("Parameters:")
+	fmt.Printf("Url: %v\nUser: %v\nPassword: ***\n", url, user)
 	l, err := ldap.DialURL(url)
 	if err != nil {
 		log.Fatal(err)
